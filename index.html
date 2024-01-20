@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+<title>h for help</title>
+<link href="icon.png">
 <body>
 <div style="position: relative;">
  <canvas id="layer1" 
@@ -16,6 +18,7 @@
 <img id="venus_ima" src="venus.png"  styles="transparent" >
 <img id="mercury_ima" src="mercury.png"  styles="transparent" >
 <img id="sun_ima" src="sun.png"  styles="transparent" >
+
 <style>
 html, body {
   width:  100%;
@@ -30,6 +33,7 @@ html, body {
 	
 </style>
 <script>
+
 document.body.style.backgroundColor = "rgb(0 0 0)";
 
 		var elem = document.getElementById("layer1");
@@ -168,6 +172,11 @@ player.y += 1*speed;
 }
 if (keyState[69]) { //e
 player.y -= 1*speed;
+}
+if (keyState[72]) { //h
+alert('wasdqe: movement\nhold shift: faster movement\nh: help');
+document.title = 'starFeld';
+keyState[72]= false;
 }
 		player.update();
 		
