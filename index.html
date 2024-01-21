@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
 <title>h for help</title>
-<link rel="icon" href="icon.png">
+<link href="icon.png">
 <body>
 <div style="position: relative;">
  <canvas id="layer1" 
    style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
  <canvas id="layer2" 
    style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+</div>
+<div class="text">
+<img id="ing_ima" src="ing.png"  styles="transparent" >
+<img id="play_ima" src="play.png"  styles="transparent" >
+<img id="for_ima" src="for.png"  styles="transparent" >
+<img id="nks_ima" src="nks.png"  styles="transparent" >
+<img id="tha_ima" src="tha.png"  styles="transparent" >
 </div>
 <img id="neptune_ima" src="neptune.png"  styles="transparent" >
 <img id="uranus_ima" src="uranus.png"  styles="transparent" >
@@ -30,7 +37,7 @@ html, body {
     img {
       position: absolute; 
     }
-	
+	    
 </style>
 <script>
 
@@ -44,11 +51,12 @@ document.body.style.backgroundColor = "rgb(0 0 0)";
 ctx.canvas.width = width = window.innerWidth-5;
   ctx.canvas.height = height = window.innerHeight-5;
 
-var plNames=['sun','mercury','venus','earth','mars','jupiter','saturn','uranus','neptune'];
-planetSizes=[15,1,2,2,2,5,4,3,3];
+var plNames=['sun','mercury','venus','earth','mars','jupiter','saturn','uranus','neptune'
+, 'tha', 'nks', 'for', 'play', 'ing'];
+planetSizes=[15,1,2,2,2,5,4,3,3,1,1,1,1,1];
 
 var planetImages= [];
-for(var i=0;i<9;i++){
+for(var i=0;i<14;i++){
 planetImages.push(document.getElementById(plNames[i] + "_ima"));
 }
 
@@ -56,13 +64,21 @@ function rand(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+function rotate(cx, cy, x, y, angle) {
+    var radians = (Math.PI / 180) * angle,
+        cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+        ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [nx, ny];
+}
+
 class entity {
   constructor(x, y,z) {
     this.x = x;
     this.y = y;
 	 this.z = z;
-  } update()
-  {return }
+  }
 }
 
 class star {
@@ -90,12 +106,15 @@ class planet {
 }
 
 
-		var planets = new Array(9);
+		var planets = new Array(14);
 	for(var i=0;i<planets.length;i++)
 	{
 	planets[i] = new planet(rand(-width/2,width/2),rand(-height,height),(i+1)*width,planetSizes[i]);
+	if(i>=9)
+	{planets[i].x=(i-8)*333;planets[i].y=0;planets[i].z+=2222}
 	}
 planets[0].z=-width;
+
 	var stars = new Array(88);
 	for(var i=0;i<stars.length;i++)
 	{
@@ -119,6 +138,7 @@ for (var i in planets){
 pl = planets[i];
 pl.px = (pl.x-player.x)/(pl.z-player.z)*width+width/2;
 		pl.py = (pl.y-player.y)/(pl.z-player.z)*height+height/2;
+		pl.x += rotate(pl.x,pl.y,0,0,.5)[0];pl.y += rotate(pl.x,pl.y,0,0,.5)[1];
 planetImages[i].style.left = pl.px + 'px';
 planetImages[i].style.top = pl.py + 'px';
 planetImages[i].style.width = (width*133*pl.size)/(pl.z-player.z) + 'px';
@@ -126,14 +146,18 @@ planetImages[i].style.height = (width*133*pl.size)/(pl.z-player.z) + 'px';
 		if(pl.z-player.z<1){
  planetImages[i].style.visibility = 'hidden';
 		}else{ planetImages[i].style.visibility = 'visible';}
-		planetImages[i].style.Color='rgb(155 0 0)';
+			if(i>=9&&planetImages[i].style.visibility){if(player.z>=width*9)
+	{planetImages[i].style.visibility = 'visible';}
+	else{ planetImages[i].style.visibility = 'hidden';}
+	}
+	
 }
 
      for (var i in stars) {
         st = stars[i];
 		st.px = (st.x-player.x)/(st.z-player.z)*width+width/2;
 		st.py = (st.y-player.y)/(st.z-player.z)*height+height/2;
-		        ctx.fillStyle = "rgb(255,255,255," + 1 + ")";
+		        ctx.fillStyle = "rgb(255,255,255," + player.z/st.z + ")";
         ctx.fillRect(st.px, st.py, width/(st.z-player.z), width/(st.z-player.z));
 		if(st.z-player.z<1){
 st.z=width+player.z;
@@ -178,7 +202,7 @@ alert('wasdqe: movement\nhold shift: faster movement\nh: help');
 document.title = 'starFeld';
 keyState[72]= false;
 }
-		player.update();
+		
 		
 //		    var thisLoop = new Date();
 //    var fps = 1000 / (thisLoop - lastLoop);
